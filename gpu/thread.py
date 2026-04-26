@@ -16,6 +16,7 @@
 #     El thread 0 suma A[0]+B[0], el thread 1 suma A[1]+B[1], etc.
 
 from enum import Enum
+from .memory import RegisterFile
 
 
 class ThreadState(Enum):
@@ -29,18 +30,19 @@ class Thread:
     def __init__(self, thread_id: int, n_registers: int = 8):
         self.thread_id: int = thread_id
 
-        self.registers: dict[str, int] = {
-            f"R{n}": 0 for n in range(n_registers)}
+        self.registers: dict[str, int] = RegisterFile()
+        for n in range(n_registers):
+            self.registers.write(f"R{n}", 0)
 
         self.pc: int = 0
         self.state: ThreadState = ThreadState.READY
         self.active: bool = True
 
     def read_register(self, name: str) -> int:
-        return self.registers[name]
+        return self.registers.read(name)
 
     def write_register(self, name: str, value: int) -> None:
-        self.registers[name] = value
+        self.registers.write(name, value)
 
 
 if __name__ == "__main__":
