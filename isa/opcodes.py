@@ -17,6 +17,24 @@
 #     GETID es fundamental — permite que cada thread sepa cuál es su índice
 #     para acceder a posiciones distintas del array (el paralelismo real).
 
+# TABLA DE REFERENCIA — formato: OPCODE dest src1 src2 label
+#
+# Opcode  dest          src1          src2          label    Efecto
+# ------  ------------  ------------  ------------  -------  ----------------------------------
+# ADD     reg destino   reg operando  reg operando  —        dest = src1 + src2
+# SUB     reg destino   reg operando  reg operando  —        dest = src1 - src2
+# MUL     reg destino   reg operando  reg operando  —        dest = src1 * src2
+# DIV     reg destino   reg operando  reg operando  —        dest = src1 / src2
+# LOAD    reg destino   reg base      reg offset    —        dest = memory[src1 + src2]
+# STORE   reg valor     reg base      reg offset    —        memory[src1 + src2] = dest
+# JMP     —             —             —             label    pc = label
+# BEQ     —             reg operando  reg operando  label    if src1 == src2: pc = label
+# BNE     —             reg operando  reg operando  label    if src1 != src2: pc = label
+# MOV     reg destino   reg fuente    —             —        dest = src1
+# NOP     —             —             —             —        (no hace nada, avanza pc)
+# RET     —             —             —             —        thread.state = FINISHED
+# GETID   reg destino   —             —             —        dest = thread.thread_id
+
 import enum
 from collections import namedtuple
 

@@ -12,7 +12,7 @@ Simulador educativo de GPU en Python. El usuario es nuevo en arquitectura GPU y 
 - [x] `gpu/thread.py` — Thread: registers (dict), pc, state, active
 - [x] `gpu/warp.py` — Warp: 32 threads, active_mask, SIMT, divergencia
 - [x] `gpu/memory.py` — GlobalMemory + SharedMemory
-- [ ] `gpu/core.py` — execute(instruction, thread, memory) con todos los opcodes
+- [x] `gpu/core.py` — execute(instruction, thread, memory) con todos los opcodes
 - [ ] `gpu/scheduler.py` — WarpScheduler: round_robin y greedy, latency hiding
 - [ ] `gpu/sm.py` — SM: assign_block(), step()
 - [ ] `gpu/gpu.py` — GPU: launch_kernel(), run()

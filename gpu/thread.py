@@ -33,6 +33,7 @@ class Thread:
         self.registers: dict[str, int] = RegisterFile()
         for n in range(n_registers):
             self.registers.write(f"R{n}", 0)
+        self.stall_cycles = 0
 
         self.pc: int = 0
         self.state: ThreadState = ThreadState.READY
