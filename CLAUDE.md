@@ -15,7 +15,7 @@ Simulador educativo de GPU en Python. El usuario es nuevo en arquitectura GPU y 
 - [x] `gpu/core.py` — execute(instruction, thread, memory) con todos los opcodes
 - [x] `gpu/scheduler.py` — WarpScheduler: round_robin y greedy, latency hiding
 - [x] `gpu/sm.py` — SM: assign_block(), step()
-- [ ] `gpu/gpu.py` — GPU: launch_kernel(), run()
+- [x] `gpu/gpu.py` — GPU: launch_kernel(), run()
 
 ### Fase 3 — Assembler y kernels
 - [ ] `isa/assembler.py` — parser texto → list[Instruction], resolver labels

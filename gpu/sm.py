@@ -74,4 +74,3 @@ class SM:
             if not warp.is_done():
                 return True
         return False
-
