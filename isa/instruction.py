@@ -33,3 +33,6 @@ class Instruction:
                 if value is not None:
                     parts.append(str(value))
         return " ".join(parts)
+
+    def __str__(self):
+        return f"Instruction {self.opcode} - Values {self.dest} {self.src1} {self.src2} {self.label}"

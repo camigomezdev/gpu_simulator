@@ -21,3 +21,11 @@
 #   ADD   R5 R0 IMM_2N# R5 = i + 2N (offset para C)
 #   STORE R4 R5       # C[i] = R4
 #   RET
+
+GETID R0
+LOAD  R1 R0
+LOAD  R2 R0 R7
+ADD   R3 R1 R2
+ADD   R8 R7 R7
+STORE R3 R0 R8
+RET

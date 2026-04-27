@@ -18,8 +18,8 @@ Simulador educativo de GPU en Python. El usuario es nuevo en arquitectura GPU y 
 - [x] `gpu/gpu.py` — GPU: launch_kernel(), run()
 
 ### Fase 3 — Assembler y kernels
-- [ ] `isa/assembler.py` — parser texto → list[Instruction], resolver labels
-- [ ] `kernels/vector_add.asm` — kernel de suma de vectores en ISA propio
+- [x] `isa/assembler.py` — parser texto → list[Instruction], resolver labels
+- [x] `kernels/vector_add.asm` — kernel de suma de vectores en ISA propio
 
 ### Fase 4 — Integracion
 - [ ] `sim/runner.py` — load_data(), run_kernel(), print_stats()
