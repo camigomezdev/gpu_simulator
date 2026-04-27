@@ -25,3 +25,53 @@
 #   CONCEPTO: Un SM puede tener multiples bloques activos a la vez.
 #   El maximo depende de recursos: registros usados, shared memory usada.
 #   Para la sim: limitar a M bloques activos (configurable).
+
+from .warp import Warp
+from .thread import Thread
+from .core import Core
+from .scheduler import WarpScheduler
+from .memory import SharedMemory, GlobalMemory
+from isa.instruction import Instruction
+
+
+class SM:
+    def __init__(self, sm_id, n_cores, global_memory):
+        self.sm_id = sm_id
+        self.cores: list[Core] = [Core(idx, False) for idx in range(n_cores)]
+        self.warps: list[Warp] = []
+        self.scheduler: WarpScheduler = WarpScheduler(self.warps)
+        self.shared_memory: SharedMemory = SharedMemory(120)
+        self.global_memory: GlobalMemory = global_memory
+        self.instructions: list[Instruction] = []
+
+    def assign_instructions(self, instructions):
+        self.instructions = instructions
+
+    def assign_block(self, block: list[Thread]):
+        warp_id = 0
+        for i in range(0, len(block), 32):
+            threads = block[i: i+32]
+            new_warp = Warp(warp_id)
+            new_warp.threads = threads
+            warp_id += 1
+            self.warps.append(new_warp)
+
+        self.scheduler.warps = self.warps
+
+    def step(self) -> bool:
+        next_warp = self.scheduler.next_warp()
+        if next_warp is None:
+            return False
+        instruction = self.instructions[next_warp.pc]
+
+        threads = next_warp.get_active_threads()
+
+        for core, thread in zip(self.cores, threads):
+            core.execute(instruction, thread, self.shared_memory)
+
+        next_warp.pc += 1
+        for warp in self.warps:
+            if not warp.is_done():
+                return True
+        return False
+
