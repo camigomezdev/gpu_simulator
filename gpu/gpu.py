@@ -71,5 +71,6 @@ class GPU:
             cycles += 1
 
         return {
-            "cycles": cycles
+            "cycles": cycles,
+            "warps_completed": len(self.sms) * self.config["warp_size"],
         }
