@@ -48,7 +48,10 @@ def assemble(source: str) -> list[Instruction]:
 
             dest = next(operands).strip() if sig.dest else None
             src1 = next(operands).strip() if sig.src1 else None
-            src2 = next(operands).strip() if sig.src2 else None
+            try:
+                src2 = next(operands).strip() if sig.src2 else None
+            except StopIteration:
+                src2 = None
             label = next(operands).strip() if sig.label else None
 
             new_inst = Instruction(

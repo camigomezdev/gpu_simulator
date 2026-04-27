@@ -48,6 +48,6 @@ class WarpScheduler:
 
     def _greedy_next(self):
         for warp in self.warps:
-            if warp.state == WarpState.READY:
+            if warp.state == WarpState.READY and not warp.is_done():
                 return warp
         return None

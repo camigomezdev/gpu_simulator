@@ -27,3 +27,30 @@
 #
 #   assert stats["result"] == [A[i] + B[i] for i in range(N)], "ERROR"
 #   print("Resultado correcto!")
+
+from sim.runner import SimRunner
+
+
+# Resultado esperado calculado en CPU (ground truth)
+N = 128
+A = [i for i in range(N)]
+B = [i*10 for i in range(N)]
+expected = [a + b for a, b in zip(A, B)]  # [11, 22, 33, 44]
+
+sim = SimRunner()
+sim.load_data(A, B, N)
+
+program = open('kernels/vector_add.asm')
+
+stats = sim.run_kernel(program.read(), 2, 64)
+sim.print_stats(stats)
+program.close()
+
+# sim.print_stats(stats)
+# Resultado del GPU simulado
+gpu_result = stats["results"]
+
+
+# Verificación
+assert gpu_result == expected, f"Error: {gpu_result} != {expected}"
+print("OK")

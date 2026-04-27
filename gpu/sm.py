@@ -26,7 +26,7 @@
 #   El maximo depende de recursos: registros usados, shared memory usada.
 #   Para la sim: limitar a M bloques activos (configurable).
 
-from .warp import Warp
+from .warp import Warp, WarpState
 from .thread import Thread
 from .core import Core
 from .scheduler import WarpScheduler
@@ -38,8 +38,7 @@ class SM:
     def __init__(self, sm_id, n_cores, global_memory):
         self.sm_id = sm_id
         self.cores: list[Core] = [Core(idx, False) for idx in range(n_cores)]
-        self.warps: list[Warp] = []
-        self.scheduler: WarpScheduler = WarpScheduler(self.warps)
+        self.scheduler: WarpScheduler = WarpScheduler([])
         self.shared_memory: SharedMemory = SharedMemory(120)
         self.global_memory: GlobalMemory = global_memory
         self.instructions: list[Instruction] = []
@@ -54,23 +53,26 @@ class SM:
             new_warp = Warp(warp_id)
             new_warp.threads = threads
             warp_id += 1
-            self.warps.append(new_warp)
-
-        self.scheduler.warps = self.warps
+            self.scheduler.warps.append(new_warp)
 
     def step(self) -> bool:
         next_warp = self.scheduler.next_warp()
         if next_warp is None:
             return False
-        instruction = self.instructions[next_warp.pc]
 
-        threads = next_warp.get_active_threads()
+        if next_warp.pc < len(self.instructions):
+            instruction = self.instructions[next_warp.pc]
 
-        for core, thread in zip(self.cores, threads):
-            core.execute(instruction, thread, self.shared_memory)
+            threads = next_warp.get_active_threads()
 
-        next_warp.pc += 1
-        for warp in self.warps:
-            if not warp.is_done():
-                return True
+            for core, thread in zip(self.cores, threads):
+                core.execute(instruction, thread, self.global_memory)
+
+            if next_warp.is_done():
+                next_warp.state = WarpState.FINISHED
+
+            next_warp.pc += 1
+            for warp in self.scheduler.warps:
+                if not warp.is_done():
+                    return True
         return False
