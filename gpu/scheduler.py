@@ -38,6 +38,9 @@ class WarpScheduler:
             return self._round_robin_next()
 
         return self._greedy_next()
+    
+    def count_finished_warps(self):
+        return sum(1 for warp in self.warps if warp.is_done())
 
     def _round_robin_next(self):
         for idx in range(self.current_warp, len(self.warps)):

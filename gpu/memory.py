@@ -46,7 +46,9 @@ class SharedMemory(Memory):
         self.max_size = max_size
 
     def write(self, addr, value) -> None:
-        if len(self.storage) < self.max_size:
+        
+        if addr < self.max_size:
+            print(len(self.storage), self.max_size)
             self.storage[addr] = value
             return addr
         raise MemoryError

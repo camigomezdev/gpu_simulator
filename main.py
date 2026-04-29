@@ -38,14 +38,21 @@ B = [i*10 for i in range(N)]
 expected = [a + b for a, b in zip(A, B)]  # [11, 22, 33, 44]
 
 sim = SimRunner()
-sim.load_data(A, B, N)
+
 
 program = open('kernels/vector_add.asm')
-
-stats = sim.run_kernel(program.read(), 2, 64)
-sim.print_stats(stats)
+instructions = program.read()
 program.close()
 
+for grid_dim, block_dim in [(8, 16), (4, 32), (2, 64), (1, 128)]:
+    print("-------")
+    sim.reset()
+    sim.load_data(A, B, N)
+    stats = sim.run_kernel(instructions, grid_dim, block_dim)
+    sim.print_stats(stats)
+    
+
+print("-------")
 # sim.print_stats(stats)
 # Resultado del GPU simulado
 gpu_result = stats["results"]

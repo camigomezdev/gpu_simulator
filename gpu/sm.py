@@ -55,6 +55,9 @@ class SM:
             warp_id += 1
             self.scheduler.warps.append(new_warp)
 
+        print(f"Cantidad de Warps: {len(self.scheduler.warps)}")
+        print(f"Block Size: {len(block)}")
+
     def step(self) -> bool:
         next_warp = self.scheduler.next_warp()
         if next_warp is None:

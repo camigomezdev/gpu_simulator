@@ -62,3 +62,6 @@ class SimRunner:
         print(f"Warps completados: {stats['warps_completed']}")
         print(
             f"Throughput: {stats['excecuted_instructions'] / stats['cycles']}")
+    
+    def reset(self):
+        self.gpu = GPU()

@@ -59,6 +59,7 @@ class GPU:
             blocks.append([Thread(threadIdx + (blockIdx * block_dim))
                           for threadIdx in range(block_dim)])
 
+        print(len(blocks))
         for i, block in enumerate(blocks):
             self.sms[i % len(self.sms)].assign_block(block)
             self.sms[i % len(self.sms)].assign_instructions(kernel)
@@ -70,7 +71,12 @@ class GPU:
             results = [sm.step() for sm in self.sms]
             cycles += 1
 
+        n_warps = sum(
+            sm.scheduler.count_finished_warps()
+            for sm in self.sms
+        )
+
         return {
             "cycles": cycles,
-            "warps_completed": len(self.sms) * self.config["warp_size"],
+            "warps_completed": n_warps,
         }
