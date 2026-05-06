@@ -30,7 +30,7 @@ from .warp import Warp, WarpState
 from .thread import Thread, ThreadState
 from .core import Core
 from .scheduler import WarpScheduler
-from .memory import MemoryHierarchy
+from .memory import MemoryHierarchy, SharedMemory
 from isa.instruction import Instruction
 
 
@@ -46,16 +46,18 @@ class SM:
         self.instructions = instructions
 
     def assign_block(self, block: list[Thread]):
+        block_memory = MemoryHierarchy()
+        block_memory.global_memory = self.memory.global_memory
+        block_memory.shared_memory = SharedMemory(1248)
+
         warp_id = 0
         for i in range(0, len(block), 32):
             threads = block[i: i+32]
             new_warp = Warp(warp_id)
             new_warp.threads = threads
+            new_warp.memory = block_memory
             warp_id += 1
             self.scheduler.warps.append(new_warp)
-
-        print(f"Cantidad de Warps: {len(self.scheduler.warps)}")
-        print(f"Block Size: {len(block)}")
 
     def step(self) -> bool:
         if self.scheduler.check_and_release_sync():
@@ -73,7 +75,7 @@ class SM:
             threads = next_warp.get_active_threads()
 
             for core, thread in zip(self.cores, threads):
-                core.execute(instruction, thread, self.memory)
+                core.execute(instruction, thread, next_warp.memory)
 
             if any(thread.state == ThreadState.SYNC for thread in next_warp.threads):
                 next_warp.state = WarpState.SYNCING
@@ -81,7 +83,10 @@ class SM:
             if next_warp.is_done():
                 next_warp.state = WarpState.FINISHED
 
-            next_warp.pc += 1
+            if threads:
+                next_warp.pc = threads[0].pc
+            else:
+                next_warp.pc += 1
 
             for warp in self.scheduler.warps:
 

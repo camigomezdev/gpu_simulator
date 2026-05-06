@@ -43,6 +43,7 @@ class Warp:
         self.active_mask = [thread.active for thread in self.threads]
         self.pc: int = 0
         self.state = WarpState.READY
+        self.memory = None
 
     def get_active_threads(self):
         return [

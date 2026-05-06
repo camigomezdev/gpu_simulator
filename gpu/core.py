@@ -70,7 +70,7 @@ class Core:
         elif opcode == Opcode.STORES:
             self._store(instruction, thread, memory.shared_memory)
         elif opcode == Opcode.SYNC:
-            self._sync(instruction, thread)
+            self._sync(thread)
 
     def _add(self, instruction: Instruction, thread: Thread):
         src1 = thread.read_register(instruction.src1)

@@ -36,22 +36,27 @@ class SimRunner:
         self.n = n
 
         for i in range(n):
-            self.gpu.global_memory.write(i, array_a[i])
-            self.gpu.global_memory.write(i + n, array_b[i])
+            self.gpu.memory.global_memory.write(i, array_a[i])
+            self.gpu.memory.global_memory.write(i + n, array_b[i])
 
-    def run_kernel(self, program, grid_dim, block_dim):
+    def run_kernel(self, program, grid_dim, block_dim, registers={}, result_count = None):
         instructions = assemble(program)
         self.gpu.launch_kernel(instructions, grid_dim, block_dim)
 
-        for sm in self.gpu.sms:
-            for warp in sm.scheduler.warps:
-                for thread in warp.threads:
-                    thread.write_register("R7", self.n)
+        if registers:
+            for sm in self.gpu.sms:
+                for warp in sm.scheduler.warps:
+                    for thread in warp.threads:
+                        for key, value in registers.items():
+                            thread.write_register(key, value)
+                        
 
         stats = self.gpu.run()
-
-        results = [self.gpu.global_memory.read(
-            idx + self.n * 2)[0] for idx in range(self.n)]
+        if result_count is None:
+            results = [self.gpu.memory.global_memory.read(
+                idx + self.n * 2)[0] for idx in range(self.n)]
+        else:
+            results = self.gpu.memory.global_memory.read(self.n * 2)[0]
         stats["results"] = results
         stats["excecuted_instructions"] = len(instructions)
         return stats
