@@ -33,6 +33,7 @@ class WarpState(Enum):
     RUNNING = "RUNNING"
     FINISHED = "FINISHED"
     STALLED = "STALLED"
+    SYNCING = "SYNCING"
 
 
 class Warp:

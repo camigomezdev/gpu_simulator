@@ -38,12 +38,9 @@ class WarpScheduler:
             return self._round_robin_next()
 
         return self._greedy_next()
-    
-    def count_finished_warps(self):
-        return sum(1 for warp in self.warps if warp.is_done())
 
     def _round_robin_next(self):
-        for idx in range(self.current_warp, len(self.warps)):
+        for idx in range(self.current_warp, self.current_warp + len(self.warps)):
             if self.warps[idx % len(self.warps)].state == WarpState.READY:
                 self.current_warp = (idx + 1) % len(self.warps)
                 return self.warps[idx % len(self.warps)]
@@ -54,3 +51,11 @@ class WarpScheduler:
             if warp.state == WarpState.READY and not warp.is_done():
                 return warp
         return None
+
+    def count_finished_warps(self):
+        return sum(1 for warp in self.warps if warp.is_done())
+
+    def check_and_release_sync(self):
+        syncing_warps = sum(
+            1 for warp in self.warps if warp.state == WarpState.SYNCING)
+        return syncing_warps == (len(self.warps) - self.count_finished_warps())

@@ -27,7 +27,7 @@
 #   Para la sim: limitar a M bloques activos (configurable).
 
 from .warp import Warp, WarpState
-from .thread import Thread
+from .thread import Thread, ThreadState
 from .core import Core
 from .scheduler import WarpScheduler
 from .memory import MemoryHierarchy
@@ -58,6 +58,11 @@ class SM:
         print(f"Block Size: {len(block)}")
 
     def step(self) -> bool:
+        if self.scheduler.check_and_release_sync():
+            for warp in self.scheduler.warps:
+                if warp.state == WarpState.SYNCING:
+                    warp.state = WarpState.READY
+
         next_warp = self.scheduler.next_warp()
         if next_warp is None:
             return False
@@ -70,11 +75,17 @@ class SM:
             for core, thread in zip(self.cores, threads):
                 core.execute(instruction, thread, self.memory)
 
+            if any(thread.state == ThreadState.SYNC for thread in next_warp.threads):
+                next_warp.state = WarpState.SYNCING
+
             if next_warp.is_done():
                 next_warp.state = WarpState.FINISHED
 
             next_warp.pc += 1
+
             for warp in self.scheduler.warps:
+
                 if not warp.is_done():
                     return True
+
         return False

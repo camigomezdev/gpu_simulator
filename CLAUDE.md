@@ -29,9 +29,9 @@ Simulador educativo de GPU en Python. El usuario es nuevo en arquitectura GPU y 
 - [x] `isa/opcodes.py` — agregar LOADS, STORES, SYNC
 - [x] `isa/instruction.py` — soporte para nuevos opcodes si es necesario
 - [x] `gpu/core.py` — ejecutar LOADS, STORES (accede a shared_memory), SYNC
-- [ ] `gpu/warp.py` — agregar estado SYNCING
-- [ ] `gpu/scheduler.py` — no ejecutar warps en SYNCING hasta que todos los warps del bloque lleguen al SYNC
-- [ ] `gpu/sm.py` — pasar shared_memory a core.execute(), detectar barrera por bloque
+- [x] `gpu/warp.py` — agregar estado SYNCING
+- [x] `gpu/scheduler.py` — no ejecutar warps en SYNCING hasta que todos los warps del bloque lleguen al SYNC
+- [x] `gpu/sm.py` — pasar shared_memory a core.execute(), detectar barrera por bloque
 - [ ] `kernels/dot_product.asm` — producto punto: parciales en shared, SYNC, reduccion por Thread 0
 
 ## Como actualizar este archivo
