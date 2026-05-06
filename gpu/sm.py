@@ -30,17 +30,16 @@ from .warp import Warp, WarpState
 from .thread import Thread
 from .core import Core
 from .scheduler import WarpScheduler
-from .memory import SharedMemory, GlobalMemory
+from .memory import MemoryHierarchy
 from isa.instruction import Instruction
 
 
 class SM:
-    def __init__(self, sm_id, n_cores, global_memory):
+    def __init__(self, sm_id, n_cores, memory):
         self.sm_id = sm_id
         self.cores: list[Core] = [Core(idx, False) for idx in range(n_cores)]
         self.scheduler: WarpScheduler = WarpScheduler([])
-        self.shared_memory: SharedMemory = SharedMemory(120)
-        self.global_memory: GlobalMemory = global_memory
+        self.memory: MemoryHierarchy = memory
         self.instructions: list[Instruction] = []
 
     def assign_instructions(self, instructions):
@@ -69,7 +68,7 @@ class SM:
             threads = next_warp.get_active_threads()
 
             for core, thread in zip(self.cores, threads):
-                core.execute(instruction, thread, self.global_memory)
+                core.execute(instruction, thread, self.memory)
 
             if next_warp.is_done():
                 next_warp.state = WarpState.FINISHED

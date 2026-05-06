@@ -27,7 +27,7 @@ from time import sleep
 
 from isa.instruction import Instruction
 from .thread import Thread, ThreadState
-from .memory import Memory
+from .memory import MemoryHierarchy, Memory
 from isa.opcodes import Opcode
 
 
@@ -36,7 +36,7 @@ class Core:
         self.core_id = core_id
         self.busy = busy
 
-    def execute(self, instruction: Instruction, thread: Thread, memory: Memory):
+    def execute(self, instruction: Instruction, thread: Thread, memory: MemoryHierarchy):
         opcode = instruction.opcode
 
         if opcode == Opcode.ADD:
@@ -48,9 +48,9 @@ class Core:
         elif opcode == Opcode.DIV:
             self._div(instruction, thread)
         elif opcode == Opcode.LOAD:
-            self._load(instruction, thread, memory)
+            self._load(instruction, thread, memory.global_memory)
         elif opcode == Opcode.STORE:
-            self._store(instruction, thread, memory)
+            self._store(instruction, thread, memory.global_memory)
         elif opcode == Opcode.GETID:
             self._get_id(instruction, thread)
         elif opcode == Opcode.MOV:
@@ -65,6 +65,12 @@ class Core:
             self._beq(instruction, thread)
         elif opcode == Opcode.BNE:
             self._bne(instruction, thread)
+        elif opcode == Opcode.LOADS:
+            self._load(instruction, thread, memory.shared_memory)
+        elif opcode == Opcode.STORES:
+            self._store(instruction, thread, memory.shared_memory)
+        elif opcode == Opcode.SYNC:
+            self._sync(instruction, thread)
 
     def _add(self, instruction: Instruction, thread: Thread):
         src1 = thread.read_register(instruction.src1)
@@ -143,4 +149,8 @@ class Core:
         thread.pc += 1
 
     def _nop(self, thread: Thread):
+        thread.pc += 1
+
+    def _sync(self, thread: Thread):
+        thread.state = ThreadState.SYNC
         thread.pc += 1

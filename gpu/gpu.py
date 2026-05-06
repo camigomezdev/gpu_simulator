@@ -26,7 +26,7 @@
 #     max_warps_per_sm = 48
 #     shared_memory_per_sm = 100 * 1024  # 100 KB
 
-from .memory import GlobalMemory
+from .memory import MemoryHierarchy
 from .sm import SM
 from .thread import Thread
 
@@ -39,10 +39,8 @@ class GPU:
             max_warps_per_sm: int = 48,
             shared_memory_per_sm: int = (100 * 1024)
     ):
-        self.global_memory = GlobalMemory()
-        self.sms = [SM(idx,
-                       cores_per_sm,
-                       self.global_memory)
+        self.memory = MemoryHierarchy()
+        self.sms = [SM(idx, cores_per_sm, self.memory)
                     for idx in range(num_sms)]
         self.config = {
             "num_sms": num_sms,

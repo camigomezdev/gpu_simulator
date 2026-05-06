@@ -24,6 +24,7 @@ class ThreadState(Enum):
     RUNNING = "RUNNING"
     FINISHED = "FINISHED"
     STALLED = "STALLED"
+    SYNC = "SYNC"
 
 
 class Thread:

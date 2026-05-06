@@ -46,7 +46,7 @@ class SharedMemory(Memory):
         self.max_size = max_size
 
     def write(self, addr, value) -> None:
-        
+
         if addr < self.max_size:
             print(len(self.storage), self.max_size)
             self.storage[addr] = value
@@ -63,6 +63,12 @@ class RegisterFile:
 
     def write(self, reg_name, value):
         self.regs[reg_name] = value
-    
+
     def __str__(self):
         return str(self.regs)
+
+
+class MemoryHierarchy:
+    def __init__(self):
+        self.global_memory = GlobalMemory()
+        self.shared_memory = SharedMemory(48)
