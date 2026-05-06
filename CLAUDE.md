@@ -23,7 +23,16 @@ Simulador educativo de GPU en Python. El usuario es nuevo en arquitectura GPU y 
 
 ### Fase 4 — Integracion
 - [x] `sim/runner.py` — load_data(), run_kernel(), print_stats()
-- [ ] `main.py` — demo y validacion end-to-end
+- [x] `main.py` — demo y validacion end-to-end
+
+### Fase 5 — Shared Memory + Sincronizacion
+- [x] `isa/opcodes.py` — agregar LOADS, STORES, SYNC
+- [ ] `isa/instruction.py` — soporte para nuevos opcodes si es necesario
+- [ ] `gpu/core.py` — ejecutar LOADS, STORES (accede a shared_memory), SYNC
+- [ ] `gpu/warp.py` — agregar estado SYNCING
+- [ ] `gpu/scheduler.py` — no ejecutar warps en SYNCING hasta que todos los warps del bloque lleguen al SYNC
+- [ ] `gpu/sm.py` — pasar shared_memory a core.execute(), detectar barrera por bloque
+- [ ] `kernels/dot_product.asm` — producto punto: parciales en shared, SYNC, reduccion por Thread 0
 
 ## Como actualizar este archivo
 

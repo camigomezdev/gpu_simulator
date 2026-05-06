@@ -61,3 +61,6 @@ class Opcode(enum.Enum):
     NOP = 11, Signature(dest=False, src1=False, src2=False, label=False)
     RET = 12, Signature(dest=False, src1=False, src2=False, label=False)
     GETID = 13, Signature(dest=True, src1=False, src2=False, label=False)
+    LOADS = 14, Signature(dest=True, src1=True, src2=True, label=False)
+    STORES = 15, Signature(dest=True, src1=True, src2=True, label=False)
+    SYNC = 16, Signature(dest=False, src1=False, src2=False, label=False)
